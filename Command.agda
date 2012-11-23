@@ -12,9 +12,9 @@ data Command : Set where
   _≔_    : Var → Expr → Command        -- assign
   _$_    : Command → Command → Command -- sequence
   _□_    : Command → Command → Command -- choice
-  {-
   raise  : Command
   _!_    : Command → Command → Command
+  {-
   _*     : Command → Command           -- loop
   call   : Var → Command
   -}
@@ -25,6 +25,7 @@ data Declaration : Set where
 data Program : Set where
   prog   : List Declaration → Program
 
+{-
 data Context : Set where
   hole        : Context
   seqleft     : Context → Command → Context
@@ -42,3 +43,4 @@ data EvalContext : Set where
   {-
   ecatch : EvalContext → Command → EvalContext
   -}
+-}

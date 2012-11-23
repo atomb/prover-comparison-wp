@@ -4,22 +4,15 @@ open import Command
 open import Expr
 open import Pred
 
-data WPType : Set where
-  wlp : WPType
-  wvlp : WPType
-
 subst : Var → Expr → Pred → Pred
 subst x e Q = λ θ → Q (extend θ x (e θ))
 
-wp : WPType → Command -> Pred -> Pred -> Pred
-wp wlp   (assert p) q r = pand p q
-wp wvlp  (assert p) q r = por (pnot p) q
-wp ty    (assume p) q r = por (pnot p) q
-wp ty    (x ≔ e)    q r = subst x e q
-wp ty    (c1 □ c2)  q r = pand (wp ty c1 q r) (wp ty c2 q r)
-wp ty    (c1 $ c2)  q r = wp ty c1 (wp ty c2 q r) r
-wp ty    skip       q r = q
-{-
-wp ty    raise      q r = r
-wp ty    (c1 ! c2)  q r = wp ty c1 q (wp ty c2 q r)
--}
+wp : Command -> Pred -> Pred -> Pred -> Pred
+wp (assert P) N X W = por (pand P N) (pand (pnot P) W)
+wp (assume P) N X W = por (pnot P) N
+wp (x ≔ e)    N X W = subst x e N
+wp (s1 □ s2)  N X W = pand (wp s1 N X W) (wp s2 N X W)
+wp (s1 $ s2)  N X W = wp s1 (wp s2 N X W) X W
+wp skip       N X W = N
+wp raise      N X W = X
+wp (s1 ! s2)  N X W = wp s1 N (wp s2 N X W) W
