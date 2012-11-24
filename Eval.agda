@@ -6,7 +6,6 @@ open import Relation.Binary.Core
 
 open import Expr
 open import Command
-open import Pred
 
 {-
 eapply : EvalContext → Command → Command
@@ -15,7 +14,7 @@ eapply (eseq   E s₂) s₁ = (eapply E s₁) $ s₂
 --eapply (ecatch E s₂) s₁ = (eapply E s₁) ! s₂
 -}
 
-data _⊢_,_▷_,_ : Program → Store → Command → Store → Command → Set where
+data _⊢_,_▷_,_ : Program → Store → Command → Store → Command → Set' where
   {-
   e-context : forall {p θ s θ' s' E} →
               (p ⊢ θ , s ▷ θ' , s') →
@@ -23,12 +22,12 @@ data _⊢_,_▷_,_ : Program → Store → Command → Store → Command → Set
   -}
 
   e-assert  : ∀ {p θ P}
-            → P θ ≡ true
+            → P θ
             ----------------------------------
             → p ⊢ θ , (assert P) ▷ θ , skip
 
   e-assume  : ∀ {p θ P}
-            → P θ ≡ true
+            → P θ
             ----------------------------------
             → p ⊢ θ , (assume P) ▷ θ , skip
 
@@ -73,7 +72,7 @@ data _⊢_,_▷_,_ : Program → Store → Command → Store → Command → Set
   -- e-loop    : ∀ {p θ s}     → (p ⊢ θ , (s *)       ▷ θ , (s $ (s *)))
   -- e-call    :
 
-data _⊢_,_▷*_,_ : Program → Store → Command → Store → Command → Set where
+data _⊢_,_▷*_,_ : Program → Store → Command → Store → Command → Set' where
 
   e-base    : ∀ {p θ θ' s s'}
             → p ⊢ θ , s ▷ θ' , s'

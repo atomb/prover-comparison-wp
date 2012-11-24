@@ -1,14 +1,17 @@
 module Command where
 
 open import Data.List
+open import Level
 
 open import Expr
-open import Pred
+open import Assertion
 
-data Command : Set where
+Set' = Set (suc zero)
+
+data Command : Set' where
   skip   : Command
-  assert : Pred → Command
-  assume : Pred → Command
+  assert : Assertion → Command
+  assume : Assertion → Command
   _≔_    : Var → Expr → Command        -- assign
   _$_    : Command → Command → Command -- sequence
   _□_    : Command → Command → Command -- choice
@@ -19,10 +22,10 @@ data Command : Set where
   call   : Var → Command
   -}
 
-data Declaration : Set where
-  func   : Var → Pred → Command → Pred → Pred → Declaration
+data Declaration : Set' where
+  func   : Var → Assertion → Command → Assertion → Assertion → Declaration
 
-data Program : Set where
+data Program : Set' where
   prog   : List Declaration → Program
 
 {-
