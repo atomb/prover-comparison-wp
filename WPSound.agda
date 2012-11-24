@@ -50,31 +50,29 @@ or-elim-2 {P} {N} {W} {θ} with P θ | W θ
 ... | true  | true  = λ _ → or-elim-3 {N} {θ}
 {- End silly stuff -}
 
-wp-pres-step : forall { p θ s θ' s' N X W }
+wp-pres-step : ∀ { p θ s θ' s' N X W }
              → (wp s N X W θ ≡ true)
              → (p ⊢ θ , s ▷ θ' , s')
-             ----------------------------
+             -------------------------
              → (wp s' N X W θ' ≡ true)
 
 wp-pres-step {_} {θ} {assert P} {.θ} {skip} {N} {X} {W} wptrue (e-assert ptrue) =
-  or-elim-2 {P} {N} {W} {θ} ptrue wptrue
+  or-elim-2 {P} {N} {W} ptrue wptrue
 wp-pres-step {_} {θ} {assume P} {.θ} {skip} {N} wptrue (e-assume ptrue) =
-  or-elim-1 {P} {N} {θ} ptrue wptrue
-wp-pres-step {_} {θ} {x ≔ e} {.(extend θ x (e θ))} wptrue e-assign = wptrue
+  or-elim-1 {P} {N} ptrue wptrue
+wp-pres-step wptrue e-assign = wptrue
 wp-pres-step {_} {θ} {s1 □ s2} {.θ} {.s1} {N} {X} {W} wptrue e-choice1 =
-  and-eliml {wp s2 N X W} {wp s1 N X W} {θ} wptrue
+  and-eliml {wp s2 N X W} {wp s1 N X W} wptrue
 wp-pres-step {_} {θ} {s1 □ s2} {.θ} {.s2} {N} {X} {W} wptrue e-choice2 =
-  and-elimr {wp s1 N X W} {wp s2 N X W} {θ} wptrue
-wp-pres-step {_} {θ} {s1 $ s2} {θ'} {s1' $ .s2} wptrue (e-seq1 s1eval) =
-  wp-pres-step wptrue s1eval
-wp-pres-step {_} {θ} {skip $ s2} {.θ} {.s2} wptrue e-seq2 = wptrue
-wp-pres-step {_} {θ} {raise $ s2} {.θ} {raise} wptrue e-seq3 = wptrue
-wp-pres-step {_} {θ} {s1 ! s2} {_} {s1' ! .s2} wptrue (e-catch1 s1eval) =
-  wp-pres-step wptrue s1eval
-wp-pres-step {_} {θ} {raise ! s2} {.θ} {.s2} wptrue e-catch2 = wptrue
-wp-pres-step {_} {θ} {skip ! s2} {.θ} {skip} wptrue e-catch3 = wptrue
+  and-elimr {wp s1 N X W} {wp s2 N X W} wptrue
+wp-pres-step wptrue (e-seq1 s1eval) = wp-pres-step wptrue s1eval
+wp-pres-step wptrue e-seq2 = wptrue
+wp-pres-step wptrue e-seq3 = wptrue
+wp-pres-step wptrue (e-catch1 s1eval) = wp-pres-step wptrue s1eval
+wp-pres-step wptrue e-catch2 = wptrue
+wp-pres-step wptrue e-catch3 = wptrue
 
-wp-pres : forall { p θ s θ' s' N X W }
+wp-pres : ∀ { p θ s θ' s' N X W }
         → (wp s N X W θ ≡ true)
         → (p ⊢ θ , s ▷* θ' , s')
         -------------------------
