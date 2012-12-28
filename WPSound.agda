@@ -43,6 +43,7 @@ wp-pres-step e-seq3 = id
 wp-pres-step (e-catch1 s1eval) = wp-pres-step s1eval
 wp-pres-step e-catch2 = id
 wp-pres-step e-catch3 = id
+wp-pres-step e-loop = {!!}
 
 wp-pres : ∀ { p θ s θ' s' N X W }
         → p ⊢ θ , s ▷* θ' , s'

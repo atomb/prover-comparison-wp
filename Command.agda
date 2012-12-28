@@ -17,8 +17,8 @@ data Command : Set' where
   _□_    : Command → Command → Command -- choice
   raise  : Command
   _!_    : Command → Command → Command
-  {-
   _*     : Command → Command           -- loop
+  {-
   call   : Var → Command
   -}
 

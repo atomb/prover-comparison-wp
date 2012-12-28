@@ -1,6 +1,6 @@
 AGDAOPTS=-i . -i ${HOME}/.agda/lib-0.6/src
 
-all: WPSound.agdai
+all: Axiomatic.agdai
 
 %.agdai: %.agda
 	agda ${AGDAOPTS} $<

@@ -69,7 +69,10 @@ data _⊢_,_▷_,_ : Program → Store → Command → Store → Command → Set
             ---------------------------------
             → p ⊢ θ , (skip  ! s) ▷ θ , skip
 
-  -- e-loop    : ∀ {p θ s}     → (p ⊢ θ , (s *)       ▷ θ , (s $ (s *)))
+  e-loop    : ∀ {p θ s}
+            -----------------------------------
+            → (p ⊢ θ , (s *) ▷ θ , (s $ (s *)))
+
   -- e-call    :
 
 data _⊢_,_▷*_,_ : Program → Store → Command → Store → Command → Set' where

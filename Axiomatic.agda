@@ -35,6 +35,9 @@ data Triple : Assertion → Command → Assertion → Assertion → Assertion
            → Triple P2 s2 N X W
            → Triple P1 s1 N P2 W
            → Triple P1 (s1 ! s2) N X W
+  a-loop   : ∀ {s N X W}
+           → Triple N s N X W
+           → Triple N (s *) N X W
 
 ax-wp-unique : ∀ { P P' s N X W }
              → Triple P  s N X W
@@ -54,6 +57,7 @@ ax-wp-unique a-raise a-raise = refl
 ax-wp-unique (a-catch t1 t2) (a-catch t3 t4) with ax-wp-unique t1 t3
 ... | refl with ax-wp-unique t2 t4
 ... | refl = refl
+ax-wp-unique (a-loop t1) (a-loop t2) = refl
 
 ax-pres-step : ∀ { p P θ s P' θ' s' N X W }
              → p ⊢ θ , s ▷ θ' , s'
@@ -84,3 +88,7 @@ ax-pres-step e-catch2 (a-catch t1 a-raise) t2
   with ax-wp-unique t1 t2
 ... | refl = id
 ax-pres-step e-catch3 (a-catch t1 a-skip) a-skip = id
+ax-pres-step e-loop (a-loop t1) (a-seq t2 t3)
+  with ax-wp-unique t2 (a-loop t1)
+... | refl with ax-wp-unique t1 t3
+... | refl = id
