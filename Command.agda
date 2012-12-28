@@ -28,22 +28,16 @@ data Declaration : Set' where
 data Program : Set' where
   prog   : List Declaration → Program
 
-{-
-data Context : Set where
+data Context : Set' where
   hole        : Context
   seqleft     : Context → Command → Context
   seqright    : Command → Context → Context
-  {-
   catchleft   : Context → Command → Context
   catchright  : Command → Context → Context
-  -}
   choiceleft  : Context → Command → Context
   choiceright : Command → Context → Context
 
-data EvalContext : Set where
+data EvalContext : Set' where
   ehole  : EvalContext
   eseq   : EvalContext → Command → EvalContext
-  {-
   ecatch : EvalContext → Command → EvalContext
-  -}
--}

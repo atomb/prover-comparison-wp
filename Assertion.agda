@@ -18,3 +18,6 @@ or P Q = P ∪ Q
 
 not : Assertion → Assertion
 not P = ∁ P
+
+subst : Var → Expr → Assertion → Assertion
+subst x e Q = λ θ → Q (extend θ x (e θ))
