@@ -6,7 +6,7 @@ open import Command
 open import Expr
 open import Assertion
 
-wp : Command -> Assertion -> Assertion -> Assertion -> Assertion
+wp : Command → Assertion → Assertion → Assertion → Assertion
 wp (assert P) N X W = (P ∩ N) ∪ ((not P) ∩ W)
 wp (assume P) N X W = (not P) ∪ N
 wp (x ≔ e)    N X W = subst x e N
