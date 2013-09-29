@@ -10,13 +10,6 @@ eapply (ecatch E s2) s1 = Catch (eapply E s1) s2
 
 data Eval : Program -> Store -> Command -> Store -> Command -> Type where
 
-  {-
-  e-context : forall {E s s' θ θ' p}
-            → p ⊢ θ , s ▷ θ' , s'
-            --------------------------------------------
-            → p ⊢ θ , (eapply E s) ▷ θ' , (eapply E s')
-  -}
-
   E_Assert  : {pr : Program} -> {t : Store} -> {p : Assertion}
            -> p t
             --------------------------------

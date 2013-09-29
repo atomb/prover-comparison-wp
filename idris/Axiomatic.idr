@@ -68,19 +68,24 @@ ax_wp_unique (A_Catch t1 t2) (A_Catch t3 t4) with ax_wp_unique t1 t3
 -}
 ax_wp_unique (A_Loop ind) (A_Loop ind) = refl
 
+ax_pres_step : {pr : Program}
+       -> {t : Store} -> {s : Command}
+       -> {t' : Store} -> {s' : Command}
+       -> {p, p', n, x, w: Assertion}
+       -> Eval pr t s t' s'
+       -> Triple p s n x w
+       -> Triple p' s' n x w
+       -> p t
+       -------------------------
+       -> p' t'
 {-
-ax-pres-step : ∀ { p P θ s P' θ' s' N X W }
-             → p ⊢ θ , s ▷ θ' , s'
-             → Triple P  s  N X W
-             → Triple P' s' N X W
-             → P θ
-             -------------------------
-             → P' θ'
 ax-pres-step (e-assert Q) a-assert a-skip =
   [ proj₂ , (λ pfalse → ⊥-elim (pfalse Q)) ∘ proj₁ ]
 ax-pres-step (e-assume Q) a-assume a-skip =
   [ (λ pfalse → ⊥-elim (pfalse Q)) , id ]
-ax-pres-step e-assign a-assign a-skip = id
+-}
+--ax_pres_step E_Assign A_Assign A_Skip pre = pre
+{-
 ax-pres-step e-choice1 (a-choice t1 t2) tr with ax-wp-unique t1 tr
 ... | refl = proj₁ 
 ax-pres-step e-choice2 (a-choice t1 t2) tr with ax-wp-unique t2 tr
