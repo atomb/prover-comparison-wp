@@ -24,4 +24,4 @@ true : Assertion
 true _ = ()
 
 false : Assertion
-false _ = _|_
+false _ = Void

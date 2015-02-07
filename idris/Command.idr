@@ -14,9 +14,9 @@ data Command : Type where
   Choice : Command -> Command -> Command
   Raise  : Command
   Catch  : Command -> Command -> Command
-  Loop   : Command -> Command
   {-
-  call   : Var -> Command
+  Loop   : Command -> Command
+  Call   : Var -> Command
   -}
 
 data Declaration : Type where

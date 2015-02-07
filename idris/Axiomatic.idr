@@ -37,10 +37,12 @@ data Triple : Assertion -> Command -> Assertion -> Assertion -> Assertion
           -> Triple p2 s2 n x w
           -> Triple p1 s1 n p2 w
           -> Triple p1 (Catch s1 s2) n x w
+  {-
   A_Loop   : {s : Command}
           -> {n, x, w : Assertion}
           -> Triple n s n x w
           -> Triple n (Loop s) n x w
+  -}
 
 ax_wp_unique : {s : Command}
             -> {p, p' : Assertion}
@@ -66,7 +68,7 @@ ax_wp_unique (A_Catch t1 t2) (A_Catch t3 t4) with ax_wp_unique t1 t3
 ... | refl with ax_wp_unique t2 t4
 ... | refl = refl
 -}
-ax_wp_unique (A_Loop ind) (A_Loop ind) = refl
+-- ax_wp_unique (A_Loop ind) (A_Loop ind) = refl
 
 ax_pres_step : {pr : Program}
        -> {t : Store} -> {s : Command}

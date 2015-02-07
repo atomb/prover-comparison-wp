@@ -1,7 +1,8 @@
 module Eval
 
-import Expr
+import Assertion
 import Command
+import Expr
 
 eapply : EvalContext -> Command -> Command
 eapply ehole s          = s
@@ -60,9 +61,11 @@ data Eval : Program -> Store -> Command -> Store -> Command -> Type where
             ---------------------------------
            -> Eval p t (Catch Skip s) t Skip
 
+  {-
   E_Loop    : {p : Program} -> {t : Store} -> {s : Command}
             -----------------------------------
            -> Eval p t (Loop s) t (Seq s (Loop s))
+  -}
 
   -- e-call    :
 

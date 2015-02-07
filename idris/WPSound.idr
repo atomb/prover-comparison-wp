@@ -18,10 +18,10 @@ wp_pres_step : {pr : Program}
 wp_pres_step (E_Assert ptrue) pre =
   case pre of
     Left p => snd p
-    Right p => FalseElim ((fst p) ptrue)
+    Right p => void ((fst p) ptrue)
 wp_pres_step (E_Assume ptrue) pre =
   case pre of
-    Left p => FalseElim (p ptrue)
+    Left p => void (p ptrue)
     Right p => p
 wp_pres_step E_Assign pre = pre
 wp_pres_step E_Choice1 pre = fst pre
