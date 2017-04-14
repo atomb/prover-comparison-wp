@@ -4,6 +4,8 @@ import Command
 import Expr
 import Assertion
 
+%access public export
+
 %default total
 wp : Command -> Assertion -> Assertion -> Assertion -> Assertion
 wp (Assert p)     n x w = or (and p n) (and (not p) w)

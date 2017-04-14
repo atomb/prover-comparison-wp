@@ -2,6 +2,8 @@ module Assertion
 
 import Expr
 
+%access public export
+
 Pred : Type -> Type
 Pred a = a -> Type
 
@@ -18,7 +20,7 @@ not : Assertion -> Assertion
 not p s = Not (p s)
 
 subst : Var -> Expr -> Assertion -> Assertion
-subst x e q s = q (extend s x (e s))
+subst x e q s = q (Extend s x (e s))
 
 true : Assertion
 true _ = ()

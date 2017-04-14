@@ -1,22 +1,24 @@
 module Expr
 
+%access public export
+
 data Var : Type where
-  var : Int -> Var
+  IVar : Int -> Var
 
 data Value : Type where
-  const : Int -> Value
+  Const : Int -> Value
 
 data Store : Type where
-  empty  : Store
-  extend : Store -> Var -> Value -> Store
+  Empty  : Store
+  Extend : Store -> Var -> Value -> Store
 
 data Lookup : Var -> Store -> Value -> Type where
   L_Here : (s : Store) -> (x : Var) ->  (v : Value)
-        -> Lookup x (extend s x v) v
+        -> Lookup x (Extend s x v) v
   L_There : (s : Store)
          -> (x : Var) -> (v : Value)
          -> (x' : Var) -> (v' : Value)
-         -> Lookup x s v -> Lookup x (extend s x' v') v
+         -> Lookup x s v -> Lookup x (Extend s x' v') v
 
 Expr : Type
 Expr = Store -> Value

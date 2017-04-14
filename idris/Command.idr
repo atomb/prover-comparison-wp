@@ -3,6 +3,8 @@ module Command
 import Expr
 import Assertion
 
+%access public export
+
 -- Set' = Set (suc zero)
 
 data Command : Type where
@@ -20,21 +22,21 @@ data Command : Type where
   -}
 
 data Declaration : Type where
-  func   : Var -> Assertion -> Command -> Assertion -> Assertion -> Declaration
+  Func   : Var -> Assertion -> Command -> Assertion -> Assertion -> Declaration
 
 data Program : Type where
-  prog   : List Declaration -> Program
+  Prog   : List Declaration -> Program
 
 data Context : Type where
-  hole        : Context
-  seqleft     : Context -> Command -> Context
-  seqright    : Command -> Context -> Context
-  catchleft   : Context -> Command -> Context
-  catchright  : Command -> Context -> Context
-  choiceleft  : Context -> Command -> Context
-  choiceright : Command -> Context -> Context
+  Hole        : Context
+  SeqLeft     : Context -> Command -> Context
+  SeqRight    : Command -> Context -> Context
+  CatchLeft   : Context -> Command -> Context
+  CatchRight  : Command -> Context -> Context
+  ChoiceLeft  : Context -> Command -> Context
+  ChoiceRight : Command -> Context -> Context
 
 data EvalContext : Type where
-  ehole  : EvalContext
-  eseq   : EvalContext -> Command -> EvalContext
-  ecatch : EvalContext -> Command -> EvalContext
+  EHole  : EvalContext
+  ESeq   : EvalContext -> Command -> EvalContext
+  ECatch : EvalContext -> Command -> EvalContext

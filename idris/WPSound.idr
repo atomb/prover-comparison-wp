@@ -6,6 +6,7 @@ import Expr
 import WP
 import Assertion
 
+total
 wp_pres_step : {pr : Program}
             -> {t : Store} -> {s : Command}
             -> {t' : Store} -> {s' : Command}
@@ -34,6 +35,7 @@ wp_pres_step E_Catch2 pre = pre
 wp_pres_step E_Catch3 pre = pre
 -- wp_pres_step E_Loop = {!!} -- TODO
 
+total
 wp_pres : {pr : Program}
        -> {t : Store} -> {s : Command}
        -> {t' : Store} -> {s' : Command}

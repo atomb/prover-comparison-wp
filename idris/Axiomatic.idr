@@ -5,12 +5,14 @@ import Eval
 import Expr
 import Assertion
 
+%access public export
+
 data Triple : Assertion -> Command -> Assertion -> Assertion -> Assertion
            -> Type where
   A_Assert : {p, n, x, w : Assertion}
-          -> Triple (or (and p n) (and (not p) w)) (assert p) n x w
+          -> Triple (or (and p n) (and (not p) w)) (Assert p) n x w
   A_Assume : {p, n, x, w : Assertion}
-          -> Triple (or (not p) n) (assume p) n x w
+          -> Triple (or (not p) n) (Assume p) n x w
   A_Assign : {e : Expr}
           -> {y : Var}
           -> {n, x, w : Assertion}
@@ -20,7 +22,7 @@ data Triple : Assertion -> Command -> Assertion -> Assertion -> Assertion
           -> {n, x, w : Assertion}
           -> Triple p1 s1 n x w
           -> Triple p2 s2 n x w
-          -> Triple (pand p1 p2) (Choice s1 s2) n x w
+          -> Triple (and p1 p2) (Choice s1 s2) n x w
   A_Seq    : {s1, s2 : Command}
           -> {p1, p2 : Assertion}
           -> {n, x, w : Assertion}
@@ -44,6 +46,7 @@ data Triple : Assertion -> Command -> Assertion -> Assertion -> Assertion
           -> Triple n (Loop s) n x w
   -}
 
+{-
 ax_wp_unique : {s : Command}
             -> {p, p' : Assertion}
             -> {n, x, w : Assertion}
@@ -53,16 +56,19 @@ ax_wp_unique : {s : Command}
 ax_wp_unique A_Assert A_Assert = refl
 ax_wp_unique A_Assume A_Assume = refl
 ax_wp_unique A_Assign A_Assign = refl
+-}
 {-
 ax_wp_unique (A_Choice t1 t2) (A_Choice t3 t4)
   with ax_wp_unique t1 t3 | ax_wp_unique t2 t4
 ... | refl | refl = refl
-ax_wp_unique (A_Seq t1 t2) (A_Seq t3 t4) with ax_wp_unique t1 t3 
+ax_wp_unique (A_Seq t1 t2) (A_Seq t3 t4) with ax_wp_unique t1 t3
 ... | refl with ax_wp_unique t2 t4
 ... | refl = refl
 -}
+{-
 ax_wp_unique A_Skip A_Skip = refl
 ax_wp_unique A_Raise A_Raise = refl
+-}
 {-
 ax_wp_unique (A_Catch t1 t2) (A_Catch t3 t4) with ax_wp_unique t1 t3
 ... | refl with ax_wp_unique t2 t4
@@ -70,6 +76,7 @@ ax_wp_unique (A_Catch t1 t2) (A_Catch t3 t4) with ax_wp_unique t1 t3
 -}
 -- ax_wp_unique (A_Loop ind) (A_Loop ind) = refl
 
+{-
 ax_pres_step : {pr : Program}
        -> {t : Store} -> {s : Command}
        -> {t' : Store} -> {s' : Command}
@@ -80,6 +87,7 @@ ax_pres_step : {pr : Program}
        -> p t
        -------------------------
        -> p' t'
+-}
 {-
 ax-pres-step (e-assert Q) a-assert a-skip =
   [ proj₂ , (λ pfalse → ⊥-elim (pfalse Q)) ∘ proj₁ ]
@@ -89,7 +97,7 @@ ax-pres-step (e-assume Q) a-assume a-skip =
 --ax_pres_step E_Assign A_Assign A_Skip pre = pre
 {-
 ax-pres-step e-choice1 (a-choice t1 t2) tr with ax-wp-unique t1 tr
-... | refl = proj₁ 
+... | refl = proj₁
 ax-pres-step e-choice2 (a-choice t1 t2) tr with ax-wp-unique t2 tr
 ... | refl = proj₂
 ax-pres-step (e-seq1 ev) (a-seq t1 t2) (a-seq t3 t4)

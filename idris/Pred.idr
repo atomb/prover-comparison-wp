@@ -2,6 +2,8 @@ module Pred
 
 import Expr
 
+%access public export
+
 Pred : Type
 Pred = Store -> Bool
 

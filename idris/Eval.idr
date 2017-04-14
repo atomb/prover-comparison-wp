@@ -4,10 +4,12 @@ import Assertion
 import Command
 import Expr
 
+%access public export
+
 eapply : EvalContext -> Command -> Command
-eapply ehole s          = s
-eapply (eseq   E s2) s1 = Seq (eapply E s1) s2
-eapply (ecatch E s2) s1 = Catch (eapply E s1) s2
+eapply Ehole s          = s
+eapply (ESeq   e s2) s1 = Seq (eapply e s1) s2
+eapply (ECatch e s2) s1 = Catch (eapply e s1) s2
 
 data Eval : Program -> Store -> Command -> Store -> Command -> Type where
 
@@ -23,7 +25,7 @@ data Eval : Program -> Store -> Command -> Store -> Command -> Type where
 
   E_Assign  : {pr : Program} -> {t : Store} -> {x : Var} -> {e : Expr}
             --------------------------------------------
-           -> Eval pr t (Assign x e) (extend t x (e t)) Skip
+           -> Eval pr t (Assign x e) (Extend t x (e t)) Skip
 
   E_Choice1 : {p : Program} -> {t : Store} -> {s : Command} -> {s' : Command}
             ---------------------------
