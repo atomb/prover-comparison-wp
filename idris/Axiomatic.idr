@@ -6,6 +6,7 @@ import Expr
 import Assertion
 
 %access public export
+%default total
 
 data Triple : Assertion -> Command -> Assertion -> Assertion -> Assertion
            -> Type where
@@ -46,37 +47,37 @@ data Triple : Assertion -> Command -> Assertion -> Assertion -> Assertion
           -> Triple n (Loop s) n x w
   -}
 
-{-
+||| Theorem: the axiomatic semantics admit only one pre-condition leading a
+||| given statement to a given triple of post-conditions.
 ax_wp_unique : {s : Command}
             -> {p, p' : Assertion}
             -> {n, x, w : Assertion}
             -> Triple p  s n x w
             -> Triple p' s n x w
             -> p = p'
-ax_wp_unique A_Assert A_Assert = refl
-ax_wp_unique A_Assume A_Assume = refl
-ax_wp_unique A_Assign A_Assign = refl
--}
-{-
-ax_wp_unique (A_Choice t1 t2) (A_Choice t3 t4)
-  with ax_wp_unique t1 t3 | ax_wp_unique t2 t4
-... | refl | refl = refl
-ax_wp_unique (A_Seq t1 t2) (A_Seq t3 t4) with ax_wp_unique t1 t3
-... | refl with ax_wp_unique t2 t4
-... | refl = refl
--}
-{-
-ax_wp_unique A_Skip A_Skip = refl
-ax_wp_unique A_Raise A_Raise = refl
--}
-{-
-ax_wp_unique (A_Catch t1 t2) (A_Catch t3 t4) with ax_wp_unique t1 t3
-... | refl with ax_wp_unique t2 t4
-... | refl = refl
--}
+ax_wp_unique {s=Skip} A_Skip A_Skip = Refl
+ax_wp_unique {s=(Assert f)} A_Assert A_Assert = Refl
+ax_wp_unique {s=(Assume f)} A_Assume A_Assume = Refl
+ax_wp_unique {s=(Assign x f)} A_Assign A_Assign = Refl
+ax_wp_unique {s=(Seq x y)} (A_Seq z s) (A_Seq t u) =
+  case ax_wp_unique z t of
+    Refl => case ax_wp_unique s u of
+              Refl => Refl
+ax_wp_unique {s=(Choice x y)} (A_Choice z s) (A_Choice t u) =
+  case ax_wp_unique z t of
+    Refl => case ax_wp_unique s u of
+              Refl => Refl
+ax_wp_unique {s=Raise} A_Raise A_Raise = Refl
+ax_wp_unique {s=(Catch x y)} (A_Catch z s) (A_Catch t u) =
+  case ax_wp_unique z t of
+    Refl => case ax_wp_unique s u of
+              Refl => Refl
 -- ax_wp_unique (A_Loop ind) (A_Loop ind) = refl
 
-{-
+||| Theorem: if evaluation proceeds from (s, t) to (s', t') and s has
+||| pre-condition p for a particular post-condition, and s' has pre-condition
+||| p' for the same post-condition, and p holds of t, then p' holds of t'. This
+||| is essentially like preservation in type systems.
 ax_pres_step : {pr : Program}
        -> {t : Store} -> {s : Command}
        -> {t' : Store} -> {s' : Command}
@@ -87,34 +88,32 @@ ax_pres_step : {pr : Program}
        -> p t
        -------------------------
        -> p' t'
--}
-{-
-ax-pres-step (e-assert Q) a-assert a-skip =
-  [ proj₂ , (λ pfalse → ⊥-elim (pfalse Q)) ∘ proj₁ ]
-ax-pres-step (e-assume Q) a-assume a-skip =
-  [ (λ pfalse → ⊥-elim (pfalse Q)) , id ]
--}
---ax_pres_step E_Assign A_Assign A_Skip pre = pre
-{-
-ax-pres-step e-choice1 (a-choice t1 t2) tr with ax-wp-unique t1 tr
-... | refl = proj₁
-ax-pres-step e-choice2 (a-choice t1 t2) tr with ax-wp-unique t2 tr
-... | refl = proj₂
-ax-pres-step (e-seq1 ev) (a-seq t1 t2) (a-seq t3 t4)
-  with ax-wp-unique t1 t3
-... | refl = ax-pres-step ev t2 t4
-ax-pres-step e-seq2 (a-seq t1 a-skip) tr with ax-wp-unique t1 tr
-... | refl = id
-ax-pres-step e-seq3 (a-seq t1 a-raise) a-raise = id
-ax-pres-step (e-catch1 ev) (a-catch t1 t2) (a-catch t3 t4)
-  with ax-wp-unique t1 t3
-... | refl = ax-pres-step ev t2 t4
-ax-pres-step e-catch2 (a-catch t1 a-raise) t2
-  with ax-wp-unique t1 t2
-... | refl = id
-ax-pres-step e-catch3 (a-catch t1 a-skip) a-skip = id
-ax-pres-step e-loop (a-loop t1) (a-seq t2 t3)
-  with ax-wp-unique t2 (a-loop t1)
-... | refl with ax-wp-unique t1 t3
-... | refl = id
--}
+ax_pres_step (E_Assert q) A_Assert A_Skip pre =
+  case pre of
+    (Left ptrue) => snd ptrue
+    (Right pfalse) => void ((fst pfalse) q)
+ax_pres_step (E_Assume q) A_Assume A_Skip pre =
+  case pre of
+    (Left ptrue) => void (ptrue q)
+    (Right pfalse) => pfalse
+ax_pres_step E_Assign A_Assign A_Skip pre = pre
+ax_pres_step E_Choice1 (A_Choice t1 t2) tr pre =
+  case ax_wp_unique t1 tr of
+    Refl => fst pre
+ax_pres_step E_Choice2 (A_Choice t1 t2) tr pre =
+  case ax_wp_unique t2 tr of
+    Refl => snd pre
+ax_pres_step (E_Seq1 ev) (A_Seq t1 t2) (A_Seq t3 t4) pre =
+  case ax_wp_unique t1 t3 of
+    Refl => ax_pres_step ev t2 t4 pre
+ax_pres_step E_Seq2 (A_Seq t1 A_Skip) tr pre =
+  case ax_wp_unique t1 tr of
+    Refl => pre
+ax_pres_step E_Seq3 (A_Seq _ A_Raise) A_Raise pre = pre
+ax_pres_step (E_Catch1 ev) (A_Catch t1 t2) (A_Catch t3 t4) pre =
+  case ax_wp_unique t1 t3 of
+    Refl => ax_pres_step ev t2 t4 pre
+ax_pres_step E_Catch2 (A_Catch t1 A_Raise) t2 pre =
+  case ax_wp_unique t1 t2 of
+    Refl => pre
+ax_pres_step E_Catch3 (A_Catch _ A_Skip) A_Skip pre = pre
