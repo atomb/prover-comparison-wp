@@ -1,4 +1,3 @@
-Add LoadPath "/Users/atomb/projects/prover-comparison-wp/coq".
 Require Import Command.
 Require Import Eval.
 Require Import Expr.
